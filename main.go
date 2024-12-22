@@ -270,7 +270,7 @@ func saveTransactionsCategoriesFromCsv(filename string) {
 
 		result = db.Where("title = ? AND amount = ? AND date = ?", csvTitle, csvAmountInt, csvDate).First(&transaction)
 
-		tag, tagErr := findTagByTerm(tags, csvTag)
+		tag, tagErr := findTagByName(tags, csvTag)
 
 		if tagErr != nil {
 			log.Printf("Failed to retrieve tag:", tagErr)
@@ -293,7 +293,7 @@ func saveTransactionsCategoriesFromCsv(filename string) {
 	}
 }
 
-func findTagByTerm(tags []models.Tag, term string) (models.Tag, error) {
+func findTagByName(tags []models.Tag, term string) (models.Tag, error) {
 	var tagToReturn models.Tag
 	var err error = nil
 

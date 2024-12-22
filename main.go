@@ -1,15 +1,23 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
 	"github.com/emersion/go-message/mail"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"io"
 	"io/fs"
 	"log"
 	"net/textproto"
 	"os"
+	"reflect"
+	"strconv"
+	"summarize-transactions/models"
 )
 
 func main() {
@@ -100,6 +108,8 @@ func main() {
 					if err != nil {
 						log.Println("attachment err: ", err)
 					}
+
+					loadCsvToDb(filename)
 				}
 			}
 		}
@@ -110,4 +120,85 @@ func main() {
 
 		log.Println("Done!")
 	}
+}
+
+func loadCsvToDb(filePath string) {
+	file, err := os.Open(filePath)
+
+	if err != nil {
+		log.Println("Error opening file: ", err)
+	}
+
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Println("Error closing file: ", err)
+		}
+	}()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+
+	if err != nil {
+		log.Println("Error reading records from file: ", err)
+	}
+
+	var csvMap []map[string]interface{}
+
+	// Use the first row as header (column names)
+	headers := records[0]
+
+	// Iterate over the records (starting from the second row)
+	for _, record := range records[1:] {
+		rowMap := make(map[string]interface{})
+
+		for i, value := range record {
+			// Use reflection to dynamically set map keys
+			rowMap[headers[i]] = value
+		}
+		csvMap = append(csvMap, rowMap)
+	}
+
+	var transactions []models.Transaction
+	for _, csvItem := range csvMap {
+		transaction := models.Transaction{}
+		for key, value := range csvItem {
+			caser := cases.Title(language.English)
+			titledKey := caser.String(key)
+			structField, _ := reflect.TypeOf(transaction).FieldByName(titledKey)
+			tag := structField.Tag.Get("csv")
+			if tag != "" {
+				reflect.ValueOf(&transaction).Elem().FieldByName(titledKey).Set(reflect.ValueOf(value))
+			}
+		}
+
+		amount := csvItem["amount"]
+		parsedAmount, err := strconv.ParseFloat(amount.(string), 64)
+
+		if err != nil {
+		}
+
+		transaction.Amount = int(parsedAmount * 100)
+
+		transactions = append(transactions, transaction)
+	}
+
+	log.Println("Finished parsing CSV to Transactions, inserting to database...")
+
+	insertTransactionsToDb(transactions)
+}
+
+func insertTransactionsToDb(transactions []models.Transaction) {
+	dsn := os.Getenv("DB_DSN")
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+
+	result := db.Create(&transactions)
+
+	if result.Error != nil {
+		log.Printf("failed to insert data: %v", result.Error)
+	}
+
+	log.Printf("successfully inserted transactions to database")
 }

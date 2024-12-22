@@ -5,9 +5,9 @@ import "gorm.io/gorm"
 type Transaction struct {
 	gorm.Model
 	Id     string `gorm:"type:uuid;default:gen_random_uuid()"`
-	Title  string `gorm:"not null"`
+	Title  string `gorm:"not null" csv:"title"`
 	Amount int    `gorm:"not null"`
-	Date   string `gorm:"type:date;not null"`
+	Date   string `gorm:"type:date;not null" csv:"date"`
 	Tags   []Tag  `gorm:"many2many:transaction_tags;"`
 }
 

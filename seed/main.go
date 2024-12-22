@@ -14,20 +14,40 @@ func main() {
 
 	dsn := os.Getenv("DB_DSN")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	dummyTag1 := models.Tag{
-		Name: "refeições",
+	dummyTags := generateDummyTags()
+	result := db.Create(dummyTags)
+
+	if result.Error != nil {
+		log.Fatalf("failed to insert tags: %v", err)
 	}
 
+	//insertTagTerms(db, dummyTag1, dummyTag2)
+
+	//insertTransactions(db, dummyTag1, dummyTag3)
+
+	fmt.Println("Dummy data loaded successfully!")
+}
+
+func generateDummyTags() []*models.Tag {
+	dummyTag1 := models.Tag{
+		Name: "refeição",
+	}
 	dummyTag2 := models.Tag{
 		Name: "transporte",
 	}
+	dummyTag3 := models.Tag{
+		Name: "assinatura",
+	}
 
-	result := db.Create([]*models.Tag{&dummyTag1, &dummyTag2})
+	return []*models.Tag{&dummyTag1, &dummyTag2, &dummyTag3}
+}
 
+func insertTagTerms(db *gorm.DB, dummyTag1, dummyTag2 models.Tag) {
 	dummyTagTerm1 := models.TagTerms{
 		Expression: "restaurante",
 		Tag:        dummyTag1,
@@ -42,7 +62,9 @@ func main() {
 	}
 
 	db.Create([]*models.TagTerms{&dummyTagTerm1, &dummyTagTerm2, &dummyTagTerm3})
+}
 
+func insertTransactions(db *gorm.DB, dummyTag1, dummyTag2 models.Tag) {
 	dummyTransaction1 := models.Transaction{
 		Title:  "Restaurante Reino das Carnes",
 		Date:   "2024-12-10",
@@ -88,11 +110,9 @@ func main() {
 
 	transactions := []*models.Transaction{&dummyTransaction1, &dummyTransaction2, &dummyTransaction3, &dummyTransaction4, &dummyTransaction5, &dummyTransaction6, &dummyTransaction8}
 
-	result = db.Create(&transactions)
+	result := db.Create(&transactions)
 
 	if result.Error != nil {
-		log.Printf("failed to insert data: %v", result.Error)
+		log.Printf("failed to insert transactions: %v", result.Error)
 	}
-
-	fmt.Println("Dummy data loaded successfully!")
 }

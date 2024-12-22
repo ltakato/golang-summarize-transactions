@@ -88,7 +88,7 @@ func main() {
 
 	transactions := []*models.Transaction{&dummyTransaction1, &dummyTransaction2, &dummyTransaction3, &dummyTransaction4, &dummyTransaction5, &dummyTransaction6, &dummyTransaction8}
 
-	result = db.Create(transactions)
+	result = db.Create(&transactions)
 
 	if result.Error != nil {
 		log.Printf("failed to insert data: %v", result.Error)

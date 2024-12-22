@@ -12,7 +12,7 @@ Tooling:
 - banco SQL para armazenar transações a serem processadas
 
 TODOs:
-- [ ] gravar no banco as transações e as tags incluindo de-para (transação 1:N tags)
+- [X] gravar no banco as transações e as tags incluindo de-para (transação 1:N tags)
 - [ ] estruturar quais termos cada tag deve dar match (alimentar manual por enquanto)
 - [ ] fazer o motor de dar match entre as transações & tags
 - [ ] retornar consolidado de lista & total de transações por tag

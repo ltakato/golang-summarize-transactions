@@ -16,6 +16,7 @@ TODOs:
 - [ ] estruturar quais termos cada tag deve dar match (alimentar manual por enquanto)
 - [ ] fazer o motor de dar match entre as transações & tags
 - [ ] retornar consolidado de lista & total de transações por tag
+- [ ] evoluir a obtenção para identificar quais transações já foram processadas para não inserir duplicatas
 - [ ] retornar consolidado segregado por mês/ano
 - [ ] download de CSV das transações que precisam incluir tags
 - [ ] upload de CSV de de-para da transação & tag

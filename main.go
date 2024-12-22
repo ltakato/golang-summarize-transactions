@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
@@ -21,6 +22,19 @@ import (
 )
 
 func main() {
+	filename := "extract.csv"
+	saveCsvToFile(filename)
+	loadCsvToDb(filename)
+
+	categorizedFilename := "extract.csv"
+	saveTransactionsCategoriesFromCsv(categorizedFilename)
+}
+
+func parseMoneyFloatToInt(floatNum float64) int {
+	return int(floatNum * 100)
+}
+
+func saveCsvToFile(filename string) {
 	// connect client
 	imapServer := os.Getenv("IMAP_SERVER")
 	email := os.Getenv("USER_EMAIL")
@@ -91,25 +105,21 @@ func main() {
 					log.Fatal(err)
 				}
 
-				switch h := p.Header.(type) {
+				switch p.Header.(type) {
 				case *mail.AttachmentHeader:
-					filename, _ := h.Filename()
-
-					log.Printf("Got attachment: %v", filename)
+					log.Printf("Got attachment")
 
 					b, errp := io.ReadAll(p.Body)
 
 					if errp != nil {
-						fmt.Println("errp ===== :", errp)
+						fmt.Println("failed to read attachment body", errp)
 					}
 
 					err := os.WriteFile(filename, b, fs.ModePerm)
 
 					if err != nil {
-						log.Println("attachment err: ", err)
+						log.Println("saving attachment file err: ", err)
 					}
-
-					loadCsvToDb(filename)
 				}
 			}
 		}
@@ -142,21 +152,7 @@ func loadCsvToDb(filePath string) {
 		log.Println("Error reading records from file: ", err)
 	}
 
-	var csvMap []map[string]interface{}
-
-	// Use the first row as header (column names)
-	headers := records[0]
-
-	// Iterate over the records (starting from the second row)
-	for _, record := range records[1:] {
-		rowMap := make(map[string]interface{})
-
-		for i, value := range record {
-			// Use reflection to dynamically set map keys
-			rowMap[headers[i]] = value
-		}
-		csvMap = append(csvMap, rowMap)
-	}
+	csvMap := mapCsvRecordsToMap(records)
 
 	var transactions []models.Transaction
 	for _, csvItem := range csvMap {
@@ -177,7 +173,7 @@ func loadCsvToDb(filePath string) {
 		if err != nil {
 		}
 
-		transaction.Amount = int(parsedAmount * 100)
+		transaction.Amount = parseMoneyFloatToInt(parsedAmount)
 
 		transactions = append(transactions, transaction)
 	}
@@ -187,9 +183,35 @@ func loadCsvToDb(filePath string) {
 	insertTransactionsToDb(transactions)
 }
 
-func insertTransactionsToDb(transactions []models.Transaction) {
+func mapCsvRecordsToMap(records [][]string) []map[string]interface{} {
+	var csvMap []map[string]interface{}
+
+	// Use the first row as header (column names)
+	headers := records[0]
+
+	// Iterate over the records (starting from the second row)
+	for _, record := range records[1:] {
+		rowMap := make(map[string]interface{})
+
+		for i, value := range record {
+			// Use reflection to dynamically set map keys
+			rowMap[headers[i]] = value
+		}
+		csvMap = append(csvMap, rowMap)
+	}
+
+	return csvMap
+}
+
+func connectDB() (*gorm.DB, error) {
 	dsn := os.Getenv("DB_DSN")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	return db, err
+}
+
+func insertTransactionsToDb(transactions []models.Transaction) {
+	db, err := connectDB()
+
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
@@ -201,4 +223,90 @@ func insertTransactionsToDb(transactions []models.Transaction) {
 	}
 
 	log.Printf("successfully inserted transactions to database")
+}
+
+func saveTransactionsCategoriesFromCsv(filename string) {
+	db, err := connectDB()
+
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+
+	file, err := os.Open(filename)
+
+	if err != nil {
+		log.Println("Error opening file: ", err)
+	}
+
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Println("Error closing file: ", err)
+		}
+	}()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+
+	if err != nil {
+		log.Println("Error reading records from file: ", err)
+	}
+
+	csvMap := mapCsvRecordsToMap(records)
+
+	var tags []models.Tag
+	result := db.Find(&tags)
+
+	if result.Error != nil {
+		log.Fatal("Failed to retrieve tags:", result.Error)
+	}
+
+	for _, csvItem := range csvMap {
+		var transaction models.Transaction
+		csvTitle := csvItem["title"]
+		csvAmount, _ := strconv.ParseFloat(csvItem["amount"].(string), 64)
+		csvAmountInt := parseMoneyFloatToInt(csvAmount)
+		csvDate := csvItem["date"]
+		csvTag := csvItem["tag"].(string)
+
+		result = db.Where("title = ? AND amount = ? AND date = ?", csvTitle, csvAmountInt, csvDate).First(&transaction)
+
+		tag, tagErr := findTagByTerm(tags, csvTag)
+
+		if tagErr != nil {
+			log.Printf("Failed to retrieve tag:", tagErr)
+			continue
+		}
+
+		// TODO: cuidado pra não fazer append duplicado!
+		transaction.Tags = append(transaction.Tags, tag)
+
+		if result.Error != nil {
+			log.Printf("Failed to retrieve transaction:", result.Error)
+			continue
+		}
+
+		result = db.Save(&transaction)
+
+		if result.Error != nil {
+			log.Printf("Failed to save transaction:", result.Error)
+		}
+	}
+}
+
+func findTagByTerm(tags []models.Tag, term string) (models.Tag, error) {
+	var tagToReturn models.Tag
+	var err error = nil
+
+	for _, tag := range tags {
+		if tag.Name == term {
+			tagToReturn = tag
+			break
+		}
+	}
+
+	if tagToReturn.Name == "" {
+		err = errors.New("tag not found")
+	}
+
+	return tagToReturn, err
 }

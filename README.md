@@ -14,6 +14,8 @@ Tooling:
 TODOs:
 - [X] gravar no banco as transações e as tags incluindo de-para (transação 1:N tags)
 - [X] estruturar quais termos cada tag deve dar match (alimentar manual por enquanto)
+- [ ] filtrar por mes-ano as categorias e transações
+- [ ] tela de detalhe de transação por mes-ano
 - [ ] fazer o motor de dar match entre as transações & tags
 - [ ] retornar consolidado de lista & total de transações por tag e mes/ano
 - [ ] refatorar de uma forma estruturada

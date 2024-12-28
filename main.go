@@ -7,6 +7,7 @@ import (
 	"github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
 	"github.com/emersion/go-message/mail"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -48,6 +49,13 @@ func initializeApi() {
 	categoriesRepository := repositories.New(db)
 
 	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
+
+	router.Use(cors.New(config))
+
 	apiRouter := router.Group("/api")
 	{
 		apiRouter.GET("/categories", controllers.GetCategories(categoriesRepository))

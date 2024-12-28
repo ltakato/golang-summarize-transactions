@@ -12,16 +12,16 @@ func TestNormalize(t *testing.T) {
 		expectedUncategorizedToken := UncategorizedCategoryToken
 		expectedTotalAmount := float32(100.50)
 
-		result := category.Normalize()
+		category.Normalize()
 
-		if result.ID == nil || *result.ID != expectedUncategorizedToken {
-			t.Errorf("expected ID to be %q, but got %v", expectedUncategorizedToken, result.ID)
+		if category.ID == nil || *category.ID != expectedUncategorizedToken {
+			t.Errorf("expected ID to be %q, but got %v", expectedUncategorizedToken, category.ID)
 		}
-		if result.Name == nil || *result.Name != expectedUncategorizedToken {
-			t.Errorf("expected ID to be %q, but got %v", expectedUncategorizedToken, result.ID)
+		if category.Name == nil || *category.Name != expectedUncategorizedToken {
+			t.Errorf("expected ID to be %q, but got %v", expectedUncategorizedToken, category.ID)
 		}
-		if result.TotalAmount != expectedTotalAmount {
-			t.Errorf("expected totalAmount to be %f, but got %v", expectedTotalAmount, result.ID)
+		if category.TotalAmount != expectedTotalAmount {
+			t.Errorf("expected totalAmount to be %f, but got %v", expectedTotalAmount, category.ID)
 		}
 	})
 }

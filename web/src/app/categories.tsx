@@ -2,11 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import CategoryCard from "@/app/category-card";
-
-type Category = {
-  name: string;
-  totalAmount: number;
-};
+import { Category } from "@/app/app-types";
 
 export default function Categories() {
   const { isPending, error, data } = useQuery<Category[]>({
@@ -23,9 +19,7 @@ export default function Categories() {
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data.map((category: Category, index: number) => (
-          <CategoryCard key={index} title={category.name}>
-            <div className="text-2xl font-bold">$ {category.totalAmount}</div>
-          </CategoryCard>
+          <CategoryCard key={index} category={category}></CategoryCard>
         ))}
       </div>
     </div>

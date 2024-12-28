@@ -25,9 +25,6 @@ export default function Categories() {
         {data.map((category: Category, index: number) => (
           <CategoryCard key={index} title={category.name}>
             <div className="text-2xl font-bold">$ {category.totalAmount}</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
           </CategoryCard>
         ))}
       </div>

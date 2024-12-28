@@ -19,96 +19,98 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	dummyTags := generateDummyTags()
-	result := db.Create(dummyTags)
+	dummyCategories := generateDummyCategories()
+	result := db.Create(&dummyCategories)
 
 	if result.Error != nil {
-		log.Fatalf("failed to insert tags: %v", err)
+		log.Fatalf("failed to insert categories: %v", err)
 	}
 
-	//insertTagTerms(db, dummyTag1, dummyTag2)
+	//insertCategoryTerms(db, dummyCategory1, dummyCategory2)
 
-	//insertTransactions(db, dummyTag1, dummyTag3)
+	insertTransactions(db, dummyCategories)
 
 	fmt.Println("Dummy data loaded successfully!")
 }
 
-func generateDummyTags() []*models.Tag {
-	dummyTag1 := models.Tag{
+func generateDummyCategories() []*models.Category {
+	dummyCategory1 := models.Category{
 		Name: "refeição",
 	}
-	dummyTag2 := models.Tag{
+	dummyCategory2 := models.Category{
 		Name: "transporte",
 	}
-	dummyTag3 := models.Tag{
+	dummyCategory3 := models.Category{
 		Name: "assinatura",
 	}
 
-	return []*models.Tag{&dummyTag1, &dummyTag2, &dummyTag3}
+	return []*models.Category{&dummyCategory1, &dummyCategory2, &dummyCategory3}
 }
 
-func insertTagTerms(db *gorm.DB, dummyTag1, dummyTag2 models.Tag) {
-	dummyTagTerm1 := models.TagTerms{
+func insertCategoryTerms(db *gorm.DB, dummyCategory1, dummyCategory2 models.Category) {
+	dummyCategoryTerm1 := models.CategoryTerms{
 		Expression: "restaurante",
-		Tag:        dummyTag1,
+		Category:   dummyCategory1,
 	}
-	dummyTagTerm2 := models.TagTerms{
+	dummyCategoryTerm2 := models.CategoryTerms{
 		Expression: "outback",
-		Tag:        dummyTag1,
+		Category:   dummyCategory2,
 	}
-	dummyTagTerm3 := models.TagTerms{
+	dummyCategoryTerm3 := models.CategoryTerms{
 		Expression: "uber",
-		Tag:        dummyTag2,
+		Category:   dummyCategory2,
 	}
 
-	db.Create([]*models.TagTerms{&dummyTagTerm1, &dummyTagTerm2, &dummyTagTerm3})
+	db.Create([]*models.CategoryTerms{&dummyCategoryTerm1, &dummyCategoryTerm2, &dummyCategoryTerm3})
 }
 
-func insertTransactions(db *gorm.DB, dummyTag1, dummyTag2 models.Tag) {
+func insertTransactions(db *gorm.DB, dummyCategories []*models.Category) {
+	dummyCategory1 := *dummyCategories[0]
+	dummyCategory2 := *dummyCategories[1]
+
 	dummyTransaction1 := models.Transaction{
-		Title:  "Restaurante Reino das Carnes",
-		Date:   "2024-12-10",
-		Amount: 8000,
-		Tags:   []models.Tag{dummyTag1},
+		Title:      "Restaurante Reino das Carnes",
+		Date:       "2024-12-10",
+		Amount:     8000,
+		Categories: []models.Category{dummyCategory1},
 	}
 	dummyTransaction2 := models.Transaction{
 		Title:  "Restaurante Frango Frito e Assado",
 		Date:   "2024-12-15",
 		Amount: 12835,
-		Tags:   []models.Tag{dummyTag1},
 	}
 	dummyTransaction3 := models.Transaction{
-		Title:  "Outback Steakhouse",
-		Date:   "2024-12-28",
-		Amount: 58095,
-		Tags:   []models.Tag{dummyTag1},
+		Title:      "Outback Steakhouse",
+		Date:       "2024-12-28",
+		Amount:     58095,
+		Categories: []models.Category{dummyCategory1},
 	}
 	dummyTransaction4 := models.Transaction{
-		Title:  "Outback Steakhouse",
-		Date:   "2024-11-03",
-		Amount: 8000,
-		Tags:   []models.Tag{dummyTag1},
+		Title:      "Outback Steakhouse",
+		Date:       "2024-11-03",
+		Amount:     8000,
+		Categories: []models.Category{dummyCategory1},
 	}
 	dummyTransaction5 := models.Transaction{
-		Title:  "Uber* Trip",
-		Date:   "2024-12-28",
-		Amount: 3000,
-		Tags:   []models.Tag{dummyTag2},
+		Title:      "Uber* Trip",
+		Date:       "2024-12-28",
+		Amount:     3000,
+		Categories: []models.Category{dummyCategory2},
 	}
 	dummyTransaction6 := models.Transaction{
-		Title:  "Uber* Trip",
-		Date:   "2024-12-28",
-		Amount: 4500,
-		Tags:   []models.Tag{dummyTag2},
+		Title:      "Uber* Trip",
+		Date:       "2024-12-28",
+		Amount:     4500,
+		Categories: []models.Category{dummyCategory2},
 	}
-	dummyTransaction8 := models.Transaction{
-		Title:  "Uber* Trip",
-		Date:   "2024-11-03",
-		Amount: 5397,
-		Tags:   []models.Tag{dummyTag2},
+	dummyTransaction7 := models.Transaction{
+		Title:      "Uber* Trip",
+		Date:       "2024-11-03",
+		Amount:     5397,
+		Categories: []models.Category{dummyCategory2},
 	}
 
-	transactions := []*models.Transaction{&dummyTransaction1, &dummyTransaction2, &dummyTransaction3, &dummyTransaction4, &dummyTransaction5, &dummyTransaction6, &dummyTransaction8}
+	transactions := []*models.Transaction{&dummyTransaction1, &dummyTransaction2, &dummyTransaction3, &dummyTransaction4, &dummyTransaction5, &dummyTransaction6, &dummyTransaction7}
 
 	result := db.Create(&transactions)
 

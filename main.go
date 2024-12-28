@@ -7,6 +7,7 @@ import (
 	"github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
 	"github.com/emersion/go-message/mail"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/driver/postgres"
@@ -18,16 +19,45 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"summarize-transactions/controllers"
 	"summarize-transactions/models"
+	"summarize-transactions/repositories"
 )
 
 func main() {
+	//initializeEngine()
+	initializeApi()
+}
+
+func initializeEngine() {
 	filename := "extract.csv"
 	saveCsvToFile(filename)
 	loadCsvToDb(filename)
 
 	categorizedFilename := "extract.csv"
 	saveTransactionsCategoriesFromCsv(categorizedFilename)
+}
+
+func initializeApi() {
+	db, err := connectDB()
+
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+
+	categoriesRepository := repositories.New(db)
+
+	router := gin.Default()
+	apiRouter := router.Group("/api")
+	{
+		apiRouter.GET("/categories", controllers.GetCategories(categoriesRepository))
+	}
+
+	err = router.Run(":8080")
+
+	if err != nil {
+		log.Fatalf("failed to run API: %v", err)
+	}
 }
 
 func parseMoneyFloatToInt(floatNum float64) int {
@@ -161,8 +191,8 @@ func loadCsvToDb(filePath string) {
 			caser := cases.Title(language.English)
 			titledKey := caser.String(key)
 			structField, _ := reflect.TypeOf(transaction).FieldByName(titledKey)
-			tag := structField.Tag.Get("csv")
-			if tag != "" {
+			category := structField.Tag.Get("csv")
+			if category != "" {
 				reflect.ValueOf(&transaction).Elem().FieldByName(titledKey).Set(reflect.ValueOf(value))
 			}
 		}
@@ -253,11 +283,11 @@ func saveTransactionsCategoriesFromCsv(filename string) {
 
 	csvMap := mapCsvRecordsToMap(records)
 
-	var tags []models.Tag
-	result := db.Find(&tags)
+	var categories []models.Category
+	result := db.Find(&categories)
 
 	if result.Error != nil {
-		log.Fatal("Failed to retrieve tags:", result.Error)
+		log.Fatal("Failed to retrieve categories:", result.Error)
 	}
 
 	for _, csvItem := range csvMap {
@@ -266,19 +296,19 @@ func saveTransactionsCategoriesFromCsv(filename string) {
 		csvAmount, _ := strconv.ParseFloat(csvItem["amount"].(string), 64)
 		csvAmountInt := parseMoneyFloatToInt(csvAmount)
 		csvDate := csvItem["date"]
-		csvTag := csvItem["tag"].(string)
+		csvCategory := csvItem["category"].(string)
 
 		result = db.Where("title = ? AND amount = ? AND date = ?", csvTitle, csvAmountInt, csvDate).First(&transaction)
 
-		tag, tagErr := findTagByName(tags, csvTag)
+		category, categoryErr := findCategoryByName(categories, csvCategory)
 
-		if tagErr != nil {
-			log.Printf("Failed to retrieve tag:", tagErr)
+		if categoryErr != nil {
+			log.Printf("Failed to retrieve category:", categoryErr)
 			continue
 		}
 
 		// TODO: cuidado pra não fazer append duplicado!
-		transaction.Tags = append(transaction.Tags, tag)
+		transaction.Categories = append(transaction.Categories, category)
 
 		if result.Error != nil {
 			log.Printf("Failed to retrieve transaction:", result.Error)
@@ -293,20 +323,20 @@ func saveTransactionsCategoriesFromCsv(filename string) {
 	}
 }
 
-func findTagByName(tags []models.Tag, term string) (models.Tag, error) {
-	var tagToReturn models.Tag
+func findCategoryByName(categories []models.Category, term string) (models.Category, error) {
+	var categoryToReturn models.Category
 	var err error = nil
 
-	for _, tag := range tags {
-		if tag.Name == term {
-			tagToReturn = tag
+	for _, category := range categories {
+		if category.Name == term {
+			categoryToReturn = category
 			break
 		}
 	}
 
-	if tagToReturn.Name == "" {
-		err = errors.New("tag not found")
+	if categoryToReturn.Name == "" {
+		err = errors.New("category not found")
 	}
 
-	return tagToReturn, err
+	return categoryToReturn, err
 }

@@ -4,24 +4,24 @@ import "gorm.io/gorm"
 
 type Transaction struct {
 	gorm.Model
-	Id     string `gorm:"type:uuid;default:gen_random_uuid()"`
-	Title  string `gorm:"not null" csv:"title"`
-	Amount int    `gorm:"not null"`
-	Date   string `gorm:"type:date;not null" csv:"date"`
-	Tags   []Tag  `gorm:"many2many:transaction_tags;"`
+	Id         string     `gorm:"type:uuid;default:gen_random_uuid()"`
+	Title      string     `gorm:"not null" csv:"title"`
+	Amount     int        `gorm:"not null"`
+	Date       string     `gorm:"type:date;not null" csv:"date"`
+	Categories []Category `gorm:"many2many:transaction_categories;"`
 }
 
-type Tag struct {
+type Category struct {
 	gorm.Model
-	Id       string     `gorm:"type:uuid;default:gen_random_uuid()"`
-	Name     string     `gorm:"unique;not null"`
-	TagTerms []TagTerms `gorm:"foreignkey:TagID"`
+	Id            string          `gorm:"type:uuid;default:gen_random_uuid()"`
+	Name          string          `gorm:"unique;not null"`
+	CategoryTerms []CategoryTerms `gorm:"foreignkey:CategoryID"`
 }
 
-type TagTerms struct {
+type CategoryTerms struct {
 	gorm.Model
 	Id         string `gorm:"type:uuid;default:gen_random_uuid()"`
 	Expression string `gorm:"not null"`
-	TagID      string `gorm:"not null"`
-	Tag        Tag
+	CategoryID string `gorm:"not null"`
+	Category   Category
 }

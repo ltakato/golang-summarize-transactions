@@ -6,7 +6,7 @@ import { Category } from "@/app/app-types";
 
 export default function Categories() {
   const { isPending, error, data } = useQuery<Category[]>({
-    queryKey: ["repoData"],
+    queryKey: ["categories"],
     queryFn: () =>
       fetch("http://localhost:8080/api/categories").then((res) => res.json()),
   });

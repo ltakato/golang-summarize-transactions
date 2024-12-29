@@ -18,6 +18,7 @@ import (
 	"io"
 	"io/fs"
 	"log"
+	"net/http"
 	"net/textproto"
 	"os"
 	"reflect"
@@ -68,6 +69,8 @@ func initializeApi() {
 
 	router.Use(cors.New(config))
 
+	router.Use(UserIdMiddleware())
+
 	apiRouter := router.Group("/api")
 	{
 		apiRouter.GET("/summary", controllers.GetSummary(transactionsRepository))
@@ -78,6 +81,22 @@ func initializeApi() {
 
 	if err != nil {
 		log.Fatalf("failed to run API: %v", err)
+	}
+}
+
+func UserIdMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userId := c.GetHeader("x-user-id")
+
+		if userId == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "x-user-id header is required"})
+			c.Abort()
+			return
+		}
+
+		c.Set("userId", userId)
+
+		c.Next()
 	}
 }
 

@@ -12,6 +12,8 @@ import (
 func GetCategories(repository *repositories.TransactionsRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		userId, _ := c.Get("userId")
+
 		defer cancel()
 
 		var q CategoryQuery
@@ -22,7 +24,7 @@ func GetCategories(repository *repositories.TransactionsRepository) gin.HandlerF
 			return
 		}
 
-		result, err := repository.GetCategoriesWithTransactions(q.Date)
+		result, err := repository.GetCategoriesWithTransactions(userId.(string), q.Date)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, nil)

@@ -12,11 +12,13 @@ import (
 func GetSummary(repository *repositories.TransactionsRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		userId, _ := c.Get("userId")
+
 		defer cancel()
 
 		var response dto.SummaryResponse
 
-		availableDates, err := repository.GetAvailableDates()
+		availableDates, err := repository.GetAvailableDates(userId.(string))
 
 		response.AvailableDates = availableDates
 

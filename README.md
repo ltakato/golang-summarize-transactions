@@ -21,6 +21,7 @@ TODOs:
 - [ ] fazer o motor de dar match entre as transações & tags (já aproveitar para refazer gravando por e-mail da pessoa)
 - [ ] deployar motor no cloud run & cloud schedule
 - [ ] receber via e-mail da pessoa o CSV de gastos e gravar no db (retornar e-mail para pessoa falando que gravou com sucesso - retornar URL)
+- [ ] validar se id do usuário é existente
 - [ ] refatorar de uma forma estruturada
 - [ ] cobrir com testes
 - [ ] refatorar com boas praticas

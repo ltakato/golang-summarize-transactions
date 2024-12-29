@@ -17,22 +17,26 @@ func New(db *gorm.DB) *TransactionsRepository {
 	}
 }
 
-func (r *TransactionsRepository) GetAvailableDates() ([]string, error) {
+func (r *TransactionsRepository) GetAvailableDates(userId string) ([]string, error) {
 	var err error
 
+	params := map[string]interface{}{
+		"userId": userId,
+	}
 	query := `
 		select
 			concat(EXTRACT(YEAR FROM t."date"), '-', EXTRACT(MONTH FROM t."date")) concat_date
 		from transactions t
+		where t.user_id = @userId
 		group by concat_date;
 	`
 	var result []string
-	err = r.db.Raw(query).Scan(&result).Error
+	err = r.db.Raw(query, params).Scan(&result).Error
 
 	return result, err
 }
 
-func (r *TransactionsRepository) GetCategoriesWithTransactions(date string) ([]dto.CategoryResponse, error) {
+func (r *TransactionsRepository) GetCategoriesWithTransactions(userId string, date string) ([]dto.CategoryResponse, error) {
 	var err error
 
 	split := strings.Split(date, "-")
@@ -44,8 +48,9 @@ func (r *TransactionsRepository) GetCategoriesWithTransactions(date string) ([]d
 	}
 
 	params := map[string]interface{}{
-		"year":  year,
-		"month": month,
+		"userId": userId,
+		"year":   year,
+		"month":  month,
 	}
 
 	query := `
@@ -57,7 +62,8 @@ func (r *TransactionsRepository) GetCategoriesWithTransactions(date string) ([]d
 		right join transaction_categories tc on c.id  = tc.category_id
 		right join transactions t on t.id = tc.transaction_id
 		where 
-			EXTRACT(YEAR FROM t."date") = @year
+		    t.user_id = @userId
+			AND EXTRACT(YEAR FROM t."date") = @year
 			AND EXTRACT(MONTH FROM t."date") = @month
 		group by c.id
 	`

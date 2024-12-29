@@ -2,6 +2,10 @@ package dto
 
 const UncategorizedCategoryToken = "(uncategorized)"
 
+type SummaryResponse struct {
+	AvailableDates []string `json:"availableDates"`
+}
+
 type CategoryResponse struct {
 	ID          *string `json:"id"`
 	Name        *string `json:"name"`

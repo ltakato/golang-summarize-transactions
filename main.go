@@ -49,7 +49,7 @@ func initializeApi() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	categoriesRepository := repositories.New(db)
+	transactionsRepository := repositories.New(db)
 
 	router := gin.Default()
 
@@ -70,7 +70,8 @@ func initializeApi() {
 
 	apiRouter := router.Group("/api")
 	{
-		apiRouter.GET("/categories", controllers.GetCategories(categoriesRepository))
+		apiRouter.GET("/summary", controllers.GetSummary(transactionsRepository))
+		apiRouter.GET("/categories", controllers.GetCategories(transactionsRepository))
 	}
 
 	err = router.Run(":8080")

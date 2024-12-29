@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func GetCategories(repository *repositories.CategoryRepository) gin.HandlerFunc {
+func GetCategories(repository *repositories.TransactionsRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()

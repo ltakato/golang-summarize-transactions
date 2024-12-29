@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Category } from "@/app/app-types";
+import { toBRLCurrencyString } from "@/lib/currency-helper";
 
 type Props = {
   category: Category;
@@ -14,7 +15,9 @@ export default function CategoryCard({
         <CardTitle className="text-sm font-medium">{name}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">R$ {totalAmount}</div>
+        <div className="text-2xl font-bold">
+          {toBRLCurrencyString(totalAmount)}
+        </div>
       </CardContent>
     </Card>
   );

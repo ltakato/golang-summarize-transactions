@@ -15,6 +15,7 @@ import {
 import React, { useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   options: { label: string; value: string }[];
@@ -38,6 +39,7 @@ export function Combobox({ options, onChange }: Props) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
+          <Badge>Período:</Badge>
           {value
             ? options.find((option) => option.value === value)?.label
             : "Select..."}
@@ -48,7 +50,7 @@ export function Combobox({ options, onChange }: Props) {
         <Command>
           <CommandInput placeholder="Search..." />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No option found</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem

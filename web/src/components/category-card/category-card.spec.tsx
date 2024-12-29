@@ -9,9 +9,10 @@ describe("CategoryCard", () => {
   };
 
   it("renders the category name and totalAmount", () => {
+    const expectedAmount = "R$ 150,75";
     render(<CategoryCard category={category} />);
 
     expect(screen.getByText(category.name)).toBeInTheDocument();
-    expect(screen.getByText(`R$ ${category.totalAmount}`)).toBeInTheDocument();
+    expect(screen.getByText(expectedAmount)).toBeInTheDocument();
   });
 });

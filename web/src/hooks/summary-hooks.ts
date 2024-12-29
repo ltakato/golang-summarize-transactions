@@ -5,9 +5,7 @@ export function useSummary() {
   return useQuery<Summary>({
     queryKey: ["summary"],
     queryFn: async () => {
-      const res = await fetch(
-        `http://${process.env.NEXT_PUBLIC_API_URL}/api/summary`,
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/summary`);
       return res.json();
     },
   });

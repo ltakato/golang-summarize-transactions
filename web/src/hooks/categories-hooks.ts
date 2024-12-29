@@ -10,7 +10,7 @@ export function useCategories(currentDate?: string | null) {
       }
 
       const res = await fetch(
-        `http://${process.env.NEXT_PUBLIC_API_URL}/api/categories?date=${currentDate}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/categories?date=${currentDate}`,
       );
       return res.json();
     },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import CategoryCard from "@/app/category-card";
+import CategoryCard from "@/components/category-card/category-card";
 import { Category } from "@/app/app-types";
 
 export default function Categories() {

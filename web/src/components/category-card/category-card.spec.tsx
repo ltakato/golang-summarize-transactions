@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { Category } from "@/app/app-types";
-import CategoryCard from "../app/category-card";
+import CategoryCard from "./category-card";
 
 describe("CategoryCard", () => {
   const category: Category = {

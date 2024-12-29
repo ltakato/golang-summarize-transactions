@@ -10,7 +10,7 @@ export function useCategories(currentDate?: string | null) {
       }
 
       const res = await fetch(
-        `http://localhost:8080/api/categories?date=${currentDate}`,
+        `http://${process.env.API_URL}/api/categories?date=${currentDate}`,
       );
       return res.json();
     },

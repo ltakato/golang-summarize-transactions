@@ -1,24 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import { Summary } from "@/app/app-types";
 import { Combobox } from "@/components/ui/combobox";
 import { useStore } from "@/store/store";
 import Categories from "@/app/categories";
 import { CharDataItem, PieChart } from "@/components/ui/pie-chart";
 import { useCategories } from "@/hooks/categories-hooks";
+import { useSummary } from "@/hooks/summary-hooks";
+import { useEffect } from "react";
 
 export default function MainPage() {
   const { availableDates, setAvailableDates, currentDate, setCurrentDate } =
     useStore();
   const { data: categories = [] } = useCategories();
-  const { isPending, error } = useQuery<Summary>({
-    queryKey: ["summary"],
-    queryFn: async () => {
-      const res = await fetch("http://localhost:8080/api/summary");
-      const json: Summary = await res.json();
-      setAvailableDates(json.availableDates);
-      return json;
-    },
-  });
+  const { isPending, error, data: summaryData } = useSummary();
+
+  useEffect(() => {
+    if (!summaryData) return;
+    setAvailableDates(summaryData.availableDates);
+  }, [summaryData, setAvailableDates]);
 
   if (isPending) return "loading...";
 

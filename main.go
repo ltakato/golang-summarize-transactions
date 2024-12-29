@@ -56,6 +56,7 @@ func initializeApi() {
 
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
+	config.AddAllowHeaders("x-user-id")
 	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {

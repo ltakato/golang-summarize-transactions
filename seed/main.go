@@ -19,7 +19,7 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	insertUsers(db)
+	dummyUsers := insertUsers(db)
 
 	dummyCategories := generateDummyCategories()
 	result := db.Create(&dummyCategories)
@@ -30,7 +30,7 @@ func main() {
 
 	//insertCategoryTerms(db, dummyCategory1, dummyCategory2)
 
-	insertTransactions(db, dummyCategories)
+	insertTransactions(db, dummyCategories, dummyUsers)
 
 	fmt.Println("Dummy data loaded successfully!")
 }
@@ -76,46 +76,54 @@ func insertCategoryTerms(db *gorm.DB, dummyCategory1, dummyCategory2 models.Cate
 	db.Create([]*models.CategoryTerms{&dummyCategoryTerm1, &dummyCategoryTerm2, &dummyCategoryTerm3})
 }
 
-func insertTransactions(db *gorm.DB, dummyCategories []*models.Category) {
+func insertTransactions(db *gorm.DB, dummyCategories []*models.Category, dummyUsers []models.User) {
+	dummyUser1 := dummyUsers[0]
 	dummyCategory1 := *dummyCategories[0]
 	dummyCategory2 := *dummyCategories[1]
 
 	dummyTransaction1 := models.Transaction{
+		User:       dummyUser1,
 		Title:      "Restaurante Reino das Carnes",
 		Date:       "2024-12-10",
 		Amount:     8000,
 		Categories: []models.Category{dummyCategory1},
 	}
 	dummyTransaction2 := models.Transaction{
+		User:   dummyUser1,
 		Title:  "Restaurante Frango Frito e Assado",
 		Date:   "2024-12-15",
 		Amount: 12835,
 	}
 	dummyTransaction3 := models.Transaction{
+		User:       dummyUser1,
 		Title:      "Outback Steakhouse",
 		Date:       "2024-12-28",
 		Amount:     58095,
 		Categories: []models.Category{dummyCategory1},
 	}
 	dummyTransaction4 := models.Transaction{
+		User:       dummyUser1,
 		Title:      "Outback Steakhouse",
 		Date:       "2024-11-03",
 		Amount:     8000,
 		Categories: []models.Category{dummyCategory1},
 	}
 	dummyTransaction5 := models.Transaction{
+		User:       dummyUser1,
 		Title:      "Uber* Trip",
 		Date:       "2024-12-28",
 		Amount:     3000,
 		Categories: []models.Category{dummyCategory2},
 	}
 	dummyTransaction6 := models.Transaction{
+		User:       dummyUser1,
 		Title:      "Uber* Trip",
 		Date:       "2024-12-28",
 		Amount:     4500,
 		Categories: []models.Category{dummyCategory2},
 	}
 	dummyTransaction7 := models.Transaction{
+		User:       dummyUser1,
 		Title:      "Uber* Trip",
 		Date:       "2024-11-03",
 		Amount:     5397,

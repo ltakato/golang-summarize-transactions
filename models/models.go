@@ -10,7 +10,9 @@ type User struct {
 
 type Transaction struct {
 	gorm.Model
-	Id         string     `gorm:"type:uuid;default:gen_random_uuid()"`
+	Id         string `gorm:"type:uuid;default:gen_random_uuid()"`
+	UserID     string `gorm:"not null"`
+	User       User
 	Title      string     `gorm:"not null" csv:"title"`
 	Amount     int        `gorm:"not null"`
 	Date       string     `gorm:"type:date;not null" csv:"date"`

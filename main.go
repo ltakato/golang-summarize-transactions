@@ -9,6 +9,8 @@ import (
 	"github.com/emersion/go-message/mail"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/driver/postgres"
@@ -21,6 +23,7 @@ import (
 	"reflect"
 	"strconv"
 	"summarize-transactions/controllers"
+	"summarize-transactions/core"
 	"summarize-transactions/models"
 	"summarize-transactions/repositories"
 )
@@ -53,6 +56,15 @@ func initializeApi() {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		err = v.RegisterValidation("partial_iso8601", func(fl validator.FieldLevel) bool {
+			return core.IsValidPartialISO8601(fl.Field().String())
+		})
+		if err != nil {
+			log.Fatalf("failed to register validation: %v", err)
+		}
+	}
 
 	router.Use(cors.New(config))
 

@@ -2,6 +2,12 @@ package models
 
 import "gorm.io/gorm"
 
+type User struct {
+	gorm.Model
+	Id    string `gorm:"type:uuid;default:gen_random_uuid()"`
+	Email string `gorm:"not null"`
+}
+
 type Transaction struct {
 	gorm.Model
 	Id         string     `gorm:"type:uuid;default:gen_random_uuid()"`

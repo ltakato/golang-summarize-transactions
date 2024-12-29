@@ -19,6 +19,8 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
+	insertUsers(db)
+
 	dummyCategories := generateDummyCategories()
 	result := db.Create(&dummyCategories)
 
@@ -31,6 +33,16 @@ func main() {
 	insertTransactions(db, dummyCategories)
 
 	fmt.Println("Dummy data loaded successfully!")
+}
+
+func insertUsers(db *gorm.DB) []models.User {
+	dummyUser1 := models.User{
+		Email: "dummy-user@dummyemail.com",
+	}
+
+	db.Create([]*models.User{&dummyUser1})
+
+	return []models.User{dummyUser1}
 }
 
 func generateDummyCategories() []*models.Category {

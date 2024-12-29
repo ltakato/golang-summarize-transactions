@@ -1,14 +1,14 @@
 "use client";
 
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import Categories from "@/app/categories";
+import MainPage from "@/app/main-page";
 
 const queryClient = new QueryClient();
 
 export default function Home() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Categories />
+      <MainPage />
     </QueryClientProvider>
   );
 }

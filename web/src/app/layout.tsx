@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import React from "react";
+import Providers from "@/app/providers";
 
 export const metadata: Metadata = {
   title: "Expenses Summary",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="flex-1 space-y-4 p-8 gap-1">{children}</div>
+        <Providers>
+          <div className="flex-1 space-y-4 p-8 gap-1">{children}</div>
+        </Providers>
       </body>
     </html>
   );

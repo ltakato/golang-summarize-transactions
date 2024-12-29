@@ -75,7 +75,12 @@ func initializeApi() {
 	apiRouter := router.Group("/api")
 	{
 		apiRouter.GET("/summary", controllers.GetSummary(transactionsRepository))
-		apiRouter.GET("/categories", controllers.GetCategories(transactionsRepository))
+		categoryRouter := apiRouter.Group("/categories")
+		categoryRouter.Use(CategoryQueryMiddleware())
+		{
+			categoryRouter.GET("/", controllers.GetCategories(transactionsRepository))
+			categoryRouter.GET("/:id/transactions", controllers.GetCategoryTransactions(transactionsRepository))
+		}
 	}
 
 	err = router.Run(":8080")
@@ -96,6 +101,22 @@ func UserIdMiddleware() gin.HandlerFunc {
 		}
 
 		c.Set("userId", userId)
+
+		c.Next()
+	}
+}
+
+func CategoryQueryMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var q controllers.CategoryQuery
+		err := c.ShouldBindWith(&q, binding.Query)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, nil)
+			return
+		}
+
+		c.Set("categoryQuery", q)
 
 		c.Next()
 	}

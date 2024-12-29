@@ -23,3 +23,15 @@ func (c *CategoryResponse) Normalize() *CategoryResponse {
 
 	return c
 }
+
+type CategoryTransactionResponse struct {
+	Title  string  `json:"title"`
+	Date   string  `json:"date"`
+	Amount float32 `json:"amount"`
+}
+
+func (c *CategoryTransactionResponse) Normalize() *CategoryTransactionResponse {
+	c.Amount = c.Amount / 100
+
+	return c
+}

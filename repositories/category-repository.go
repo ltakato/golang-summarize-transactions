@@ -76,3 +76,45 @@ func (r *TransactionsRepository) GetCategoriesWithTransactions(userId string, da
 
 	return result, err
 }
+
+func (r *TransactionsRepository) GetCategoryTransactions(userId string, categoryId string, date string) ([]dto.CategoryTransactionResponse, error) {
+	var err error
+
+	split := strings.Split(date, "-")
+	year, err := strconv.ParseInt(split[0], 10, 32)
+	month, err := strconv.ParseInt(split[1], 10, 32)
+
+	if err != nil {
+		return nil, err
+	}
+
+	params := map[string]interface{}{
+		"id":     categoryId,
+		"userId": userId,
+		"year":   year,
+		"month":  month,
+	}
+
+	query := `
+		select
+			title,
+			date,
+			amount
+		from transactions t 
+		join transaction_categories tc on t.id = tc.transaction_id 
+		where 
+			tc.category_id = @id
+			AND t.user_id = @userId
+			AND EXTRACT(YEAR FROM t."date") = @year
+			AND EXTRACT(MONTH FROM t."date") = @month
+		order by date desc
+	`
+	result := []dto.CategoryTransactionResponse{}
+	err = r.db.Raw(query, params).Scan(&result).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
+}

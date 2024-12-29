@@ -16,8 +16,11 @@ TODOs:
 - [X] estruturar quais termos cada tag deve dar match (alimentar manual por enquanto)
 - [X] filtrar por mes-ano as categorias e transações
 - [X] tela de categorias por mes-ano
-- [ ] fazer o motor de dar match entre as transações & tags
-- [ ] retornar consolidado de lista & total de transações por tag e mes/ano
+- [ ] refazer transactions para retornar pela API por e-mail da pessoa (front também - fazer endpoint com id por e-mail da pessoa pra ter link acess'vel/compartilhável)
+- [ ] retornar consolidado de lista das transações por categoria e mes/ano
+- [ ] fazer o motor de dar match entre as transações & tags (já aproveitar para refazer gravando por e-mail da pessoa)
+- [ ] deployar motor no cloud run & cloud schedule
+- [ ] receber via e-mail da pessoa o CSV de gastos e gravar no db (retornar e-mail para pessoa falando que gravou com sucesso - retornar URL)
 - [ ] refatorar de uma forma estruturada
 - [ ] cobrir com testes
 - [ ] refatorar com boas praticas

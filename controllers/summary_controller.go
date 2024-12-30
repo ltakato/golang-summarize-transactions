@@ -1,31 +1,39 @@
 package controllers
 
 import (
-	"context"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"summarize-transactions/dto"
 	"summarize-transactions/repositories"
-	"time"
 )
 
-func GetSummary(repository *repositories.TransactionsRepository) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+type SummaryController struct {
+	repository *repositories.TransactionsRepository
+	BaseController
+}
 
-		defer cancel()
-
-		availableDates, err := repository.GetAvailableDates(c)
-
-		response := dto.SummaryResponse{
-			AvailableDates: availableDates,
-		}
-
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, nil)
-			return
-		}
-
-		c.JSON(http.StatusOK, response)
+func NewSummaryController(repository *repositories.TransactionsRepository) *SummaryController {
+	return &SummaryController{
+		repository:     repository,
+		BaseController: BaseController{},
 	}
 }
+
+func (controller *SummaryController) GetSummary() gin.HandlerFunc {
+	return controller.Run(
+		func(c *gin.Context) {
+			availableDates, err := controller.repository.GetAvailableDates(c)
+
+			response := dto.SummaryResponse{
+				AvailableDates: availableDates,
+			}
+
+			if err != nil {
+				controller.InternalServerError(c, nil)
+				return
+			}
+
+			controller.Ok(c, response)
+		})
+}
+
+var _ IBaseController = (*SummaryController)(nil)

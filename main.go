@@ -25,6 +25,7 @@ import (
 	"strconv"
 	"summarize-transactions/controllers"
 	"summarize-transactions/core"
+	"summarize-transactions/dto"
 	"summarize-transactions/models"
 	"summarize-transactions/repositories"
 )
@@ -72,14 +73,17 @@ func initializeApi() {
 
 	router.Use(UserIdMiddleware())
 
+	categoriesController := controllers.NewCategoriesController(transactionsRepository)
+	summaryController := controllers.NewSummaryController(transactionsRepository)
+
 	apiRouter := router.Group("/api")
 	{
-		apiRouter.GET("/summary", controllers.GetSummary(transactionsRepository))
+		apiRouter.GET("/summary", summaryController.GetSummary())
 		categoryRouter := apiRouter.Group("/categories")
 		categoryRouter.Use(CategoryQueryMiddleware())
 		{
-			categoryRouter.GET("/", controllers.GetCategories(transactionsRepository))
-			categoryRouter.GET("/:id/transactions", controllers.GetCategoryTransactions(transactionsRepository))
+			categoryRouter.GET("/", categoriesController.GetCategories())
+			categoryRouter.GET("/:id/transactions", categoriesController.GetCategoryTransactions())
 		}
 	}
 
@@ -108,7 +112,7 @@ func UserIdMiddleware() gin.HandlerFunc {
 
 func CategoryQueryMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var q controllers.CategoryQuery
+		var q dto.CategoryQuery
 		err := c.ShouldBindWith(&q, binding.Query)
 
 		if err != nil {

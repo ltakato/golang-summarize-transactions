@@ -31,6 +31,10 @@ func (c *CategoryResponse) Normalize() *CategoryResponse {
 	return c
 }
 
+type CategoryQuery struct {
+	Date string `form:"date" binding:"required,partial_iso8601"`
+}
+
 type CategoryTransactionResponse struct {
 	Title  string        `json:"title"`
 	Date   string        `json:"date"`

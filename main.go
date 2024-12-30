@@ -82,7 +82,7 @@ func initializeApi() {
 		categoryRouter := apiRouter.Group("/categories")
 		categoryRouter.Use(CategoryQueryMiddleware())
 		{
-			categoryRouter.GET("/", categoriesController.GetCategories())
+			categoryRouter.GET("", categoriesController.GetCategories())
 			categoryRouter.GET("/:id/transactions", categoriesController.GetCategoryTransactions())
 		}
 	}
@@ -117,6 +117,7 @@ func CategoryQueryMiddleware() gin.HandlerFunc {
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, nil)
+			c.Abort()
 			return
 		}
 

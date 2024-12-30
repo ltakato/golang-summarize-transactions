@@ -33,6 +33,13 @@ def pubsub_trigger():
 
 def process():
     try:
+        bucket_name = 'summary-transactions'
+        blob_name = 'extract-example.csv'
+        destination_file_name = '/tmp/extract-example.csv'  # Local file path to save
+
+        download_storage_file(bucket_name, blob_name, destination_file_name)
+        print('downloaded from storage')
+        read_and_print_csv(destination_file_name)
         # df = pd.read_csv('extract-example.csv')
         # classifications = []
         # for title in df['title']:
@@ -67,12 +74,4 @@ def read_and_print_csv(local_file_path):
     print(df)
 
 if __name__ == '__main__':
-    bucket_name = 'summary-transactions'
-    blob_name = 'extract-example.csv'
-    destination_file_name = '/tmp/extract-example.csv'  # Local file path to save
-
-    download_storage_file(bucket_name, blob_name, destination_file_name)
-    print('downloaded from storage')
-    read_and_print_csv(destination_file_name)
-
     app.run(debug=True, host='0.0.0.0', port=8080)

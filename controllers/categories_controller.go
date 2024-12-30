@@ -11,13 +11,12 @@ import (
 func GetCategories(repository *repositories.TransactionsRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		userId, _ := c.Get("userId")
 
 		defer cancel()
 
 		categoryQuery, _ := c.Get("categoryQuery")
 
-		result, err := repository.GetCategoriesWithTransactions(userId.(string), categoryQuery.(CategoryQuery).Date)
+		result, err := repository.GetCategoriesWithTransactions(c, categoryQuery.(CategoryQuery).Date)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, nil)
@@ -35,13 +34,13 @@ func GetCategories(repository *repositories.TransactionsRepository) gin.HandlerF
 func GetCategoryTransactions(repository *repositories.TransactionsRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		categoryId := c.Param("id")
-		userId, _ := c.Get("userId")
-		categoryQuery, _ := c.Get("categoryQuery")
 
 		defer cancel()
 
-		result, err := repository.GetCategoryTransactions(userId.(string), categoryId, categoryQuery.(CategoryQuery).Date)
+		categoryId := c.Param("id")
+		categoryQuery, _ := c.Get("categoryQuery")
+
+		result, err := repository.GetCategoryTransactions(c, categoryId, categoryQuery.(CategoryQuery).Date)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, nil)

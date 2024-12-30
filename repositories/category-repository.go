@@ -1,28 +1,30 @@
 package repositories
 
 import (
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
+	"summarize-transactions/core"
 	"summarize-transactions/dto"
 )
 
 type TransactionsRepository struct {
-	db *gorm.DB
+	UserScopedRepository
 }
 
 func New(db *gorm.DB) *TransactionsRepository {
 	return &TransactionsRepository{
-		db: db,
+		UserScopedRepository: UserScopedRepository{
+			db: db,
+		},
 	}
 }
 
-func (r *TransactionsRepository) GetAvailableDates(userId string) ([]string, error) {
+func (r *TransactionsRepository) GetAvailableDates(c *gin.Context) ([]string, error) {
 	var err error
 
-	params := map[string]interface{}{
-		"userId": userId,
-	}
+	params := core.ParamsInterface{}
 	query := `
 		select
 			concat(EXTRACT(YEAR FROM t."date"), '-', EXTRACT(MONTH FROM t."date")) concat_date
@@ -31,12 +33,12 @@ func (r *TransactionsRepository) GetAvailableDates(userId string) ([]string, err
 		group by concat_date;
 	`
 	var result []string
-	err = r.db.Raw(query, params).Scan(&result).Error
+	err = r.userScopedQuery(c, query, params).Scan(&result).Error
 
 	return result, err
 }
 
-func (r *TransactionsRepository) GetCategoriesWithTransactions(userId string, date string) ([]dto.CategoryResponse, error) {
+func (r *TransactionsRepository) GetCategoriesWithTransactions(c *gin.Context, date string) ([]dto.CategoryResponse, error) {
 	var err error
 
 	split := strings.Split(date, "-")
@@ -47,10 +49,9 @@ func (r *TransactionsRepository) GetCategoriesWithTransactions(userId string, da
 		return nil, err
 	}
 
-	params := map[string]interface{}{
-		"userId": userId,
-		"year":   year,
-		"month":  month,
+	params := core.ParamsInterface{
+		"year":  year,
+		"month": month,
 	}
 
 	query := `
@@ -68,7 +69,7 @@ func (r *TransactionsRepository) GetCategoriesWithTransactions(userId string, da
 		group by c.id
 	`
 	result := []dto.CategoryResponse{}
-	err = r.db.Raw(query, params).Scan(&result).Error
+	err = r.userScopedQuery(c, query, params).Scan(&result).Error
 
 	if err != nil {
 		return nil, err
@@ -77,7 +78,7 @@ func (r *TransactionsRepository) GetCategoriesWithTransactions(userId string, da
 	return result, err
 }
 
-func (r *TransactionsRepository) GetCategoryTransactions(userId string, categoryId string, date string) ([]dto.CategoryTransactionResponse, error) {
+func (r *TransactionsRepository) GetCategoryTransactions(c *gin.Context, categoryId string, date string) ([]dto.CategoryTransactionResponse, error) {
 	var err error
 
 	split := strings.Split(date, "-")
@@ -88,11 +89,10 @@ func (r *TransactionsRepository) GetCategoryTransactions(userId string, category
 		return nil, err
 	}
 
-	params := map[string]interface{}{
-		"id":     categoryId,
-		"userId": userId,
-		"year":   year,
-		"month":  month,
+	params := core.ParamsInterface{
+		"id":    categoryId,
+		"year":  year,
+		"month": month,
 	}
 
 	query := `
@@ -110,7 +110,7 @@ func (r *TransactionsRepository) GetCategoryTransactions(userId string, category
 		order by date desc
 	`
 	result := []dto.CategoryTransactionResponse{}
-	err = r.db.Raw(query, params).Scan(&result).Error
+	err = r.userScopedQuery(c, query, params).Scan(&result).Error
 
 	if err != nil {
 		return nil, err

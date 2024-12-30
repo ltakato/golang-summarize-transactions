@@ -2,6 +2,7 @@ package core
 
 import "encoding/json"
 
+type ParamsInterface = map[string]interface{}
 type Currency int
 
 func (c Currency) MarshalJSON() ([]byte, error) {

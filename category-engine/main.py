@@ -4,6 +4,7 @@ import torch
 from transformers import pipeline
 from flask import Flask, request, jsonify
 import base64
+from google.cloud import storage
 
 app = Flask(__name__)
 
@@ -12,7 +13,7 @@ logger = logging.getLogger()
 
 classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
-CATEGORIES = ["food", "entertainment", "grocery"]
+CATEGORIES = ["food", "transport","shopping", "entertainment", "grocery"]
 
 @app.route('/user-categories-pubsub', methods=['POST'])
 def pubsub_trigger():
@@ -49,5 +50,28 @@ def process():
     except Exception as e:
         return jsonify({"error": f"Failed to process CSV file: {str(e)}"}), 400
 
+def download_storage_file(bucket_name, blob_name, destination_file_name):
+    storage_client = storage.Client()
+
+    bucket = storage_client.get_bucket(bucket_name)
+
+    blob = bucket.blob(blob_name)
+
+    blob.download_to_filename(destination_file_name)
+
+    print(f"File {blob_name} downloaded to {destination_file_name}.")
+
+def read_and_print_csv(local_file_path):
+    df = pd.read_csv(local_file_path)
+    print(df)
+
 if __name__ == '__main__':
+    bucket_name = 'summary-transactions'
+    blob_name = 'extract-example.csv'
+    destination_file_name = '/tmp/extract-example.csv'  # Local file path to save
+
+    download_storage_file(bucket_name, blob_name, destination_file_name)
+    print('downloaded from storage')
+    read_and_print_csv(destination_file_name)
+
     app.run(debug=True, host='0.0.0.0', port=8080)

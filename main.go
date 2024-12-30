@@ -378,14 +378,14 @@ func saveTransactionsCategoriesFromCsv(filename string) {
 		transaction.Categories = append(transaction.Categories, category)
 
 		if result.Error != nil {
-			log.Printf("Failed to retrieve transaction:", result.Error)
+			log.Printf("Failed to retrieve transaction: %e", result.Error)
 			continue
 		}
 
 		result = db.Save(&transaction)
 
 		if result.Error != nil {
-			log.Printf("Failed to save transaction:", result.Error)
+			log.Printf("Failed to save transaction: %e", result.Error)
 		}
 	}
 }

@@ -122,8 +122,8 @@ func CategoryQueryMiddleware() gin.HandlerFunc {
 	}
 }
 
-func parseMoneyFloatToInt(floatNum float64) int {
-	return int(floatNum * 100)
+func parseMoneyFloatToCurrency(floatNum float64) core.Currency {
+	return core.Currency(floatNum * 100)
 }
 
 func saveCsvToFile(filename string) {
@@ -265,7 +265,7 @@ func loadCsvToDb(filePath string) {
 		if err != nil {
 		}
 
-		transaction.Amount = parseMoneyFloatToInt(parsedAmount)
+		transaction.Amount = parseMoneyFloatToCurrency(parsedAmount)
 
 		transactions = append(transactions, transaction)
 	}
@@ -356,7 +356,7 @@ func saveTransactionsCategoriesFromCsv(filename string) {
 		var transaction models.Transaction
 		csvTitle := csvItem["title"]
 		csvAmount, _ := strconv.ParseFloat(csvItem["amount"].(string), 64)
-		csvAmountInt := parseMoneyFloatToInt(csvAmount)
+		csvAmountInt := parseMoneyFloatToCurrency(csvAmount)
 		csvDate := csvItem["date"]
 		csvCategory := csvItem["category"].(string)
 

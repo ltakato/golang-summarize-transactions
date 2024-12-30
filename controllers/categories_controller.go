@@ -48,10 +48,6 @@ func GetCategoryTransactions(repository *repositories.TransactionsRepository) gi
 			return
 		}
 
-		for i := range result {
-			result[i].Normalize()
-		}
-
 		c.JSON(http.StatusOK, result)
 	}
 }

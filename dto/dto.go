@@ -1,5 +1,7 @@
 package dto
 
+import "summarize-transactions/core"
+
 const UncategorizedCategoryToken = "(uncategorized)"
 
 type SummaryResponse struct {
@@ -7,9 +9,9 @@ type SummaryResponse struct {
 }
 
 type CategoryResponse struct {
-	ID          *string `json:"id"`
-	Name        *string `json:"name"`
-	TotalAmount float32 `json:"totalAmount"`
+	ID          *string       `json:"id"`
+	Name        *string       `json:"name"`
+	TotalAmount core.Currency `json:"totalAmount"`
 }
 
 func (c *CategoryResponse) Normalize() *CategoryResponse {
@@ -19,19 +21,11 @@ func (c *CategoryResponse) Normalize() *CategoryResponse {
 		c.Name = &uncategorized
 	}
 
-	c.TotalAmount = c.TotalAmount / 100
-
 	return c
 }
 
 type CategoryTransactionResponse struct {
-	Title  string  `json:"title"`
-	Date   string  `json:"date"`
-	Amount float32 `json:"amount"`
-}
-
-func (c *CategoryTransactionResponse) Normalize() *CategoryTransactionResponse {
-	c.Amount = c.Amount / 100
-
-	return c
+	Title  string        `json:"title"`
+	Date   string        `json:"date"`
+	Amount core.Currency `json:"amount"`
 }

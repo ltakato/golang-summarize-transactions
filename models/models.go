@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"summarize-transactions/core"
+)
 
 type User struct {
 	gorm.Model
@@ -13,10 +16,10 @@ type Transaction struct {
 	Id         string `gorm:"type:uuid;default:gen_random_uuid()"`
 	UserID     string `gorm:"not null"`
 	User       User
-	Title      string     `gorm:"not null" csv:"title"`
-	Amount     int        `gorm:"not null"`
-	Date       string     `gorm:"type:date;not null" csv:"date"`
-	Categories []Category `gorm:"many2many:transaction_categories;"`
+	Title      string        `gorm:"not null" csv:"title"`
+	Amount     core.Currency `gorm:"not null"`
+	Date       string        `gorm:"type:date;not null" csv:"date"`
+	Categories []Category    `gorm:"many2many:transaction_categories;"`
 }
 
 type Category struct {

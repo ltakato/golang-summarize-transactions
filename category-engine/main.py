@@ -11,7 +11,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
 
-classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+# classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
 CATEGORIES = ["food", "transport","shopping", "entertainment", "grocery"]
 
@@ -33,20 +33,21 @@ def pubsub_trigger():
 
 def process():
     try:
-        df = pd.read_csv('extract-example.csv')
-        classifications = []
-        for title in df['title']:
-            result = classifier(title, CATEGORIES)
-            predicted_label = result['labels'][0]
-            score = result['scores'][0]
+        # df = pd.read_csv('extract-example.csv')
+        # classifications = []
+        # for title in df['title']:
+        #     result = classifier(title, CATEGORIES)
+        #     predicted_label = result['labels'][0]
+        #     score = result['scores'][0]
 
-            logger.info(f"Classified title: '{title}' as '{predicted_label}' with score: {score:.4f}")
+        #     logger.info(f"Classified title: '{title}' as '{predicted_label}' with score: {score:.4f}")
 
-            classifications.append({
-                "title": title,
-                "category": predicted_label,
-                "score": score
-            })
+        #     classifications.append({
+        #         "title": title,
+        #         "category": predicted_label,
+        #         "score": score
+        #     })
+        print('classify process finished')
     except Exception as e:
         return jsonify({"error": f"Failed to process CSV file: {str(e)}"}), 400
 

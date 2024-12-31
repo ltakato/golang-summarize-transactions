@@ -1,42 +1,58 @@
-date,title,amount,tag
-2024-12-12,Uber Uber *Trip Help.U,22.52,transporte
-2024-12-11,Uber* Trip,24.23,transporte
-2024-12-09,Dl*Google Google,7.99,assinatura
-2024-12-07,Dm *Crunchyroll Llc,19.99,assinatura
-2024-12-06,Uber Uber *Trip Help.U,29.95,transporte
-2024-12-03,Onnow Play,49.90,assinatura
-2024-12-02,Uber* Trip,16.93,transporte
-2024-12-01,Dm *Helpmaxcom,29.90,assinatura
-2024-12-01,Uber* Trip,32.86,transporte
-2024-11-30,Uber *Uber *Trip,47.98,transporte
-2024-11-29,Netflix Entretenimento,57.80,assinatura
-2024-11-28,Uber Uber *Trip Help.U,11.94,transporte
-2024-11-28,Uber Uber *Trip Help.U,23.96,transporte
-2024-11-27,Uber* Trip,22.10,transporte
-2024-11-27,Dl *Google Youtubeprem,24.90,assinatura
-2024-11-27,Uber *Uber *Trip,14.90,transporte
-2024-11-25,Uber *Uber *Trip,30.03,transporte
-2024-11-24,Restaurante H W,86.00,refeição
-2024-11-24,Uber* Trip,30.98,transporte
-2024-11-24,Uber *Uber *Trip,20.97,transporte
-2024-11-21,Uber *Uber *Trip,30.98,transporte
-2024-11-21,Uber* Trip,5.25,transporte
-2024-11-21,Amazon Prime Canais,21.90,assinatura
-2024-11-20,Uber *Uber *Trip,47.95,transporte
-2024-11-20,Totalpass,59.90,assinatura
-2024-11-20,Uber *Uber *Trip,14.91,transporte
-2024-11-20,Uber *Uber *Trip,79.24,transporte
-2024-11-20,Uber *Uber *Trip,18.99,transporte
-2024-11-16,Amazonprimebr,19.90,assinatura
-2024-11-16,Uber* Trip,11.97,transporte
-2024-11-16,Uber* Trip,39.84,transporte
-2024-11-16,Uber *Uber *Trip,13.97,transporte
-2024-11-15,Uber* Trip,38.92,transporte
-2024-11-15,Uber *Uber *Trip,22.99,transporte
-2024-11-15,Uber* Trip,17.99,transporte
-2024-11-15,Uber *Uber *Trip,22.96,transporte
-2024-11-15,Uber *Uber *Trip,19.97,transporte
-2024-11-14,Uber *Uber *Trip,32.92,transporte
-2024-11-14,Google Headspace Inc,15.99,assinatura
-2024-11-14,Uber* Trip,75.90,transporte
-2024-11-14,Uber* Trip,29.41,transporte
+date,title,amount
+2024-12-12,Uber Uber *Trip Help.U,22.52
+2024-12-12,Amazon Marketplace,163.40
+2024-12-11,Uber* Trip,24.23
+2024-12-09,(anagrow),356.55
+2024-12-09,Dl*Google Google,7.99
+2024-12-07,Dm *Crunchyroll Llc,19.99
+2024-12-06,Uber Uber *Trip Help.U,29.95
+2024-12-03,Onnow Play,49.90
+2024-12-02,Uber* Trip,16.93
+2024-12-01,Dm *Helpmaxcom,29.90
+2024-12-01,Uber* Trip,32.86
+2024-11-30,Uber *Uber *Trip,47.98
+2024-11-29,Netflix Entretenimento,57.80
+2024-11-28,Uber Uber *Trip Help.U,11.94
+2024-11-28,Uber Uber *Trip Help.U,23.96
+2024-11-27,Uber* Trip,22.10
+2024-11-27,Dl *Google Youtubeprem,24.90
+2024-11-27,Uber *Uber *Trip,14.90
+2024-11-26,Airbnb * Hm2e2ecenb,194.72
+2024-11-25,Uber *Uber *Trip,30.03
+2024-11-24,Restaurante H W,86.00
+2024-11-24,Uber* Trip,30.98
+2024-11-24,Uber *Uber *Trip,20.97
+2024-11-22,"Estorno de ""Amazon Prime Canais""",-21.90
+2024-11-21,Saldo restante da fatura anterior,0.00
+2024-11-21,Uber *Uber *Trip,30.98
+2024-11-21,Uber* Trip,5.25
+2024-11-21,Saldo restante da fatura anterior,0.00
+2024-11-21,Amazon Prime Canais,21.90
+2024-11-21,Pagamento recebido,-4570.26
+2024-11-20,Uber *Uber *Trip,47.95
+2024-11-20,Totalpass,59.90
+2024-11-20,Uber *Uber *Trip,14.91
+2024-11-20,Uber *Uber *Trip,79.24
+2024-11-20,Uber *Uber *Trip,18.99
+2024-11-16,Amazonprimebr,19.90
+2024-11-16,Uber* Trip,11.97
+2024-11-16,Uber* Trip,39.84
+2024-11-16,Uber *Uber *Trip,13.97
+2024-11-15,Uber* Trip,38.92
+2024-11-15,Uber *Uber *Trip,22.99
+2024-11-15,Uber* Trip,17.99
+2024-11-15,Uber *Uber *Trip,22.96
+2024-11-15,Uber *Uber *Trip,19.97
+2024-11-14,Uber *Uber *Trip,32.92
+2024-11-14,Airbnb * Hmkq324pne,1838.36
+2024-11-14,Google Headspace Inc,15.99
+2024-11-14,Uber* Trip,75.90
+2024-11-14,Uber* Trip,29.41
+2024-11-13,7050 Shop Center Paul - Parcela 5/5,137.70
+2024-11-13,Gol Linhas A*Dtnewk012 - Parcela 3/5,105.54
+2024-11-13,Gol Linhas A*Yxddes014 - Parcela 3/5,325.88
+2024-11-13,Uber *Uber *Trip,42.57
+2024-11-13,Uber *Uber *Trip,34.99
+2024-11-13,Gol Linhas A*Ykzuqv018 - Parcela 5/5,238.12
+2024-11-13,Htm*Rd - Parcela 6/12,39.90
+2024-11-13,7042 Shop Eldorado - Parcela 2/3,139.83

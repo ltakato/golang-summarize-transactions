@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/csv"
 	"errors"
 	"fmt"
@@ -23,11 +24,14 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 	"summarize-transactions/controllers"
 	"summarize-transactions/core"
 	"summarize-transactions/dto"
 	"summarize-transactions/models"
 	"summarize-transactions/repositories"
+	"summarize-transactions/services"
+	"time"
 )
 
 func main() {
@@ -206,16 +210,41 @@ func saveCsvToFile(filename string) {
 				case *mail.AttachmentHeader:
 					log.Printf("Got attachment")
 
+					senderAddress := msg.Envelope.From[0].Address()
+					senderAddress = strings.ReplaceAll(senderAddress, ".", "_")
+					formattedTime := time.Now().Format("200601021504")
+					filenameToSave := senderAddress + "-" + formattedTime + ".csv"
+
+					localFilePath := "/tmp/" + filenameToSave
+					// TODO: variavel de ambiente!
+					bucketName := "summary-transactions"
+					// TODO: variavel de ambiente!
+					objectName := "email-csv/" + filenameToSave
+
 					b, errp := io.ReadAll(p.Body)
 
 					if errp != nil {
 						fmt.Println("failed to read attachment body", errp)
 					}
 
-					err := os.WriteFile(filename, b, fs.ModePerm)
+					err = os.WriteFile(localFilePath, b, fs.ModePerm)
 
 					if err != nil {
 						log.Println("saving attachment file err: ", err)
+					}
+
+					ctx := context.Background()
+
+					file, err := os.Open(localFilePath)
+					if err != nil {
+						log.Fatalf("os.Open: %v", err)
+					}
+
+					storageClient := services.NewStorageClient(ctx)
+					err = storageClient.Upload(file, bucketName, objectName)
+
+					if err != nil {
+						log.Fatalf("Failed to upload file to strage: %v", err)
 					}
 				}
 			}

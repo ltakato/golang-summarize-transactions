@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { toBRLCurrencyString } from "@/lib/currency-helper";
 import { DateFormats, formatDate } from "@/lib/date-helper";
+import { sumArray } from "@/lib/math-helper";
 
 type Props = {
   data: CategoryTransaction[];
@@ -17,6 +18,7 @@ type Props = {
 
 export default function CategoryTransactions(props: Props) {
   const { data = [] } = props;
+  const transactionsAmount = sumArray(data, (category) => category.amount);
   return (
     <Table>
       <TableHeader>
@@ -41,8 +43,10 @@ export default function CategoryTransactions(props: Props) {
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
+          <TableCell colSpan={2}>Total</TableCell>
+          <TableCell className="text-right">
+            {toBRLCurrencyString(transactionsAmount)}
+          </TableCell>
         </TableRow>
       </TableFooter>
     </Table>

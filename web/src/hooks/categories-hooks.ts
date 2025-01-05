@@ -27,7 +27,11 @@ export function useCategoryTransactions() {
   const { currentDate, currentCategory } = useStore();
 
   return useQuery<CategoryTransaction[]>({
-    queryKey: ["category-transactions", currentCategory?.id as string],
+    queryKey: [
+      "category-transactions",
+      currentDate,
+      currentCategory?.id as string,
+    ],
     queryFn: async () => {
       const apiClient = new TransactionsSummaryApiClient({
         userId: userId as string,

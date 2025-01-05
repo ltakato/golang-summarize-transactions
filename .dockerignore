@@ -1,0 +1,69 @@
+# flyctl launch added from .gitignore
+**/.idea
+**/atlas.hcl
+
+# flyctl launch added from .idea/.gitignore
+# Default ignored files
+.idea/shelf
+.idea/workspace.xml
+# Editor-based HTTP Client requests
+.idea/httpRequests
+# Datasource local storage ignored files
+.idea/dataSources
+.idea/dataSources.local.xml
+
+# flyctl launch added from category-engine/.gitignore
+category-engine/**/venv
+category-engine/**/service-account.json
+category-engine/**/tmp
+
+# flyctl launch added from web/.gitignore
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+web/node_modules
+web/.pnp
+web/**/.pnp.*
+web/**/.yarn/*
+!web/**/.yarn/patches
+!web/**/.yarn/plugins
+!web/**/.yarn/releases
+!web/**/.yarn/versions
+
+# testing
+web/coverage
+
+# next.js
+web/.next
+web/out
+
+# production
+web/build
+
+# misc
+web/**/.DS_Store
+web/**/*.pem
+
+# debug
+web/**/npm-debug.log*
+web/**/yarn-debug.log*
+web/**/yarn-error.log*
+web/**/.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+web/**/.env*
+
+# vercel
+web/**/.vercel
+
+# typescript
+web/**/*.tsbuildinfo
+web/**/next-env.d.ts
+
+# flyctl launch added from web/.idea/.gitignore
+# Default ignored files
+web/.idea/shelf
+web/.idea/workspace.xml
+# Editor-based HTTP Client requests
+web/.idea/httpRequests
+fly.toml

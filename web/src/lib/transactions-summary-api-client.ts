@@ -22,4 +22,10 @@ export class TransactionsSummaryApiClient {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/categories?${params.toString()}`;
     return this.fetch(url);
   }
+
+  async getCategoryTransactions(date: string, categoryId: string) {
+    const params = new URLSearchParams({ date });
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${categoryId}/transactions?${params.toString()}`;
+    return this.fetch(url);
+  }
 }

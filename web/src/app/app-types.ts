@@ -1,4 +1,10 @@
+type UserInfo = {
+  id: string;
+  email: string;
+};
+
 export type Summary = {
+  userInfo: UserInfo;
   availableDates: string[];
 };
 

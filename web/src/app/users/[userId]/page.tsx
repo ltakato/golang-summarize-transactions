@@ -28,7 +28,10 @@ export default function UserPage() {
 
   return (
     <div className="space-y-8">
-      <DatesCombobox summary={summary} onChange={setCurrentDate} />
+      <div className="space-y-4">
+        <h1>Welcome back, {summary.userInfo?.email}</h1>
+        <DatesCombobox summary={summary} onChange={setCurrentDate} />
+      </div>
       <div className="grid grid-cols-[60%_40%] gap-4">
         {isCategoryFetched && (
           <div className="space-y-4">

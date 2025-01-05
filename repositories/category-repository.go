@@ -13,7 +13,7 @@ type TransactionsRepository struct {
 	UserScopedRepository
 }
 
-func New(db *gorm.DB) *TransactionsRepository {
+func NewTransactionsRepository(db *gorm.DB) *TransactionsRepository {
 	return &TransactionsRepository{
 		UserScopedRepository: UserScopedRepository{
 			db: db,

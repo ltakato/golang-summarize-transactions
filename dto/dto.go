@@ -6,7 +6,13 @@ import (
 
 const UncategorizedCategoryToken = "(uncategorized)"
 
+type UserInfo struct {
+	Id    string `json:"id"`
+	Email string `json:"email"`
+}
+
 type SummaryResponse struct {
+	User           UserInfo `json:"userInfo"`
 	AvailableDates []string `json:"availableDates"`
 }
 

@@ -81,6 +81,8 @@ func (r *TransactionsRepository) GetCategoriesWithTransactions(c *gin.Context, d
 func (r *TransactionsRepository) GetCategoryTransactions(c *gin.Context, categoryId string, date string) ([]dto.CategoryTransactionResponse, error) {
 	var err error
 
+	isUncategorized := categoryId == dto.UncategorizedCategoryToken
+
 	split := strings.Split(date, "-")
 	year, err := strconv.ParseInt(split[0], 10, 32)
 	month, err := strconv.ParseInt(split[1], 10, 32)
@@ -109,6 +111,24 @@ func (r *TransactionsRepository) GetCategoryTransactions(c *gin.Context, categor
 			AND EXTRACT(MONTH FROM t."date") = @month
 		order by date desc
 	`
+
+	if isUncategorized {
+		query = `
+			select
+				title,
+				date,
+				amount
+			from transactions t
+			left join transaction_categories tc on t.id = tc.transaction_id
+			where 
+				tc.category_id is null
+				and t.user_id = @userId
+				and extract(year from t."date") = @year
+				and extract(month from t."date") = @month
+			order by date desc
+		`
+	}
+
 	result := []dto.CategoryTransactionResponse{}
 	err = r.userScopedQuery(c, query, params).Scan(&result).Error
 

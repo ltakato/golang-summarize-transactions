@@ -47,6 +47,7 @@ func initializeApi() {
 
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
+	config.ExposeHeaders = []string{controllers.XUnreadCount}
 	config.AddAllowHeaders("x-user-id")
 	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
 

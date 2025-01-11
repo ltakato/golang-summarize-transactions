@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <div className="flex-1 space-y-4 p-8 gap-1">{children}</div>
+          <div className="flex-1 space-y-4 gap-1">{children}</div>
         </Providers>
       </body>
     </html>

@@ -15,6 +15,7 @@ import (
 	"summarize-transactions/dto"
 	"summarize-transactions/email_engine"
 	"summarize-transactions/repositories"
+	"time"
 )
 
 func main() {
@@ -61,7 +62,7 @@ func initializeApi() {
 	}
 
 	router.Use(cors.New(config))
-
+	router.Use(RequestTimingMiddleware())
 	router.Use(UserIdMiddleware())
 
 	categoriesController := controllers.NewCategoriesController(transactionsRepository)
@@ -100,6 +101,15 @@ func UserIdMiddleware() gin.HandlerFunc {
 		c.Set("userId", userId)
 
 		c.Next()
+	}
+}
+
+func RequestTimingMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+		c.Next()
+		duration := time.Since(start)
+		log.Printf("%s %s took %v", c.Request.Method, c.Request.URL.Path, duration)
 	}
 }
 

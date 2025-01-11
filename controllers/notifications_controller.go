@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"summarize-transactions/core"
 	"summarize-transactions/repositories"
 )
 
@@ -25,21 +26,26 @@ func NewNotificationsController(repository *repositories.NotificationRepository)
 func (controller *NotificationsController) GetNotifications() gin.HandlerFunc {
 	return controller.Run(
 		func(c *gin.Context) {
-			result, err := controller.repository.GetAll(c)
-			if err != nil {
-				controller.InternalServerError(c, nil)
+			tasks := []core.Task{
+				func() (interface{}, error) {
+					return controller.repository.GetAll(c)
+				},
+				func() (interface{}, error) {
+					return controller.repository.CountUnread(c)
+				},
+			}
+			results := core.RunConcurrentTasks(tasks)
+			result1, err1 := results[0].Result, results[0].Error
+			result2, err2 := results[1].Result, results[1].Error
+
+			if err1 != nil || err2 != nil {
+				controller.InternalServerError(c, "Failed to fetch notifications")
 				return
 			}
 
-			unreadCount, err := controller.repository.CountUnread(c)
-			if err != nil {
-				controller.InternalServerError(c, nil)
-				return
-			}
+			c.Header(XUnreadCount, fmt.Sprintf("%d", result2))
 
-			c.Header(XUnreadCount, fmt.Sprintf("%d", unreadCount))
-
-			controller.Ok(c, result)
+			controller.Ok(c, result1)
 		})
 }
 

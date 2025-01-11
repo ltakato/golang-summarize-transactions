@@ -17,11 +17,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { Bell, BellDot } from "lucide-react";
 
 import React from "react";
 import NotificationBell from "@/components/notification-bell/notification-bell";
+import { useNotifications } from "@/hooks/notification-hooks";
 
 export default function UserPage() {
   const { setCurrentDate, currentCategory } = useStore();
@@ -31,6 +30,7 @@ export default function UserPage() {
     error: isCategoryError,
     data: categories = [],
   } = useCategories();
+  const notifications = useNotifications();
   const categoryTransactions = useCategoryTransactions();
 
   if (isPending) return "loading...";
@@ -44,13 +44,12 @@ export default function UserPage() {
         <div className="flex items-center space-x-4">
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <NotificationBell count={10} />
+              <NotificationBell count={notifications.data?.unreadCount ?? 0} />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Billing</DropdownMenuItem>
-              <DropdownMenuItem>Team</DropdownMenuItem>
-              <DropdownMenuItem>Subscription</DropdownMenuItem>
+              {notifications.data?.items.map((item) => (
+                <DropdownMenuItem key={item.id}>{item.text}</DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
           <p>{summary.userInfo?.email}</p>

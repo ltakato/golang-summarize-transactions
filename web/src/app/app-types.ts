@@ -19,3 +19,10 @@ export type CategoryTransaction = {
   date: Date;
   amount: number;
 };
+
+export type Notification = {
+  id: string;
+  text: string;
+  date: Date;
+  read: boolean;
+};

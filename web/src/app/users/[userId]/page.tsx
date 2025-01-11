@@ -28,7 +28,8 @@ export default function UserPage() {
 
   return (
     <div>
-      <div className="flex h-16 items-center px-4  border-b">
+      <div className="flex justify-between h-16 items-center p-4 border-b">
+        <h2 className="text-2xl font-bold tracking-tight">Expenses Summary</h2>
         <p>{summary.userInfo?.email}</p>
       </div>
       <div className="flex flex-col space-y-8 p-4">

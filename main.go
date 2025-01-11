@@ -44,17 +44,13 @@ func initializeApi() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	transactionsRepository := repositories.NewTransactionsRepository(db)
-	userRepository := repositories.NewUserRepository(db)
-	notificationRepository := repositories.NewNotificationRepository(db)
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.ExposeHeaders = []string{controllers.XUnreadCount}
+	corsConfig.AddAllowHeaders(XUserId)
+	corsConfig.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
 
 	router := gin.Default()
-
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.ExposeHeaders = []string{controllers.XUnreadCount}
-	config.AddAllowHeaders(XUserId)
-	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		err = v.RegisterValidation("partial_iso8601", func(fl validator.FieldLevel) bool {
@@ -65,9 +61,13 @@ func initializeApi() {
 		}
 	}
 
-	router.Use(cors.New(config))
+	router.Use(cors.New(corsConfig))
 	router.Use(RequestTimingMiddleware())
 	router.Use(UserIdMiddleware())
+
+	transactionsRepository := repositories.NewTransactionsRepository(db)
+	userRepository := repositories.NewUserRepository(db)
+	notificationRepository := repositories.NewNotificationRepository(db)
 
 	categoriesController := controllers.NewCategoriesController(transactionsRepository)
 	summaryController := controllers.NewSummaryController(userRepository, transactionsRepository)
@@ -77,8 +77,7 @@ func initializeApi() {
 	{
 		apiRouter.GET("/summary", summaryController.GetSummary())
 		apiRouter.GET("/notifications", notificationsController.GetNotifications())
-		categoryRouter := apiRouter.Group("/categories")
-		categoryRouter.Use(CategoryQueryMiddleware())
+		categoryRouter := apiRouter.Group("/categories").Use(CategoryQueryMiddleware())
 		{
 			categoryRouter.GET("", categoriesController.GetCategories())
 			categoryRouter.GET("/:id/transactions", categoriesController.GetCategoryTransactions())

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"summarize-transactions/core"
 	"summarize-transactions/dto"
 	"summarize-transactions/repositories"
 )
@@ -23,17 +24,26 @@ func NewSummaryController(userRepository *repositories.UserRepository, repositor
 func (controller *SummaryController) GetSummary() gin.HandlerFunc {
 	return controller.Run(
 		func(c *gin.Context) {
-			availableDates, err := controller.repository.GetAvailableDates(c)
-			userInfo, err := controller.userRepository.GetUserInfo(c)
+			tasks := []core.Task{
+				func() (interface{}, error) {
+					return controller.repository.GetAvailableDates(c)
+				},
+				func() (interface{}, error) {
+					return controller.userRepository.GetUserInfo(c)
+				},
+			}
+			results := core.RunConcurrentTasks(tasks)
+			availableDates, err1 := results[0].Result, results[0].Error
+			userInfo, err2 := results[1].Result, results[1].Error
 
-			if err != nil {
+			if err1 != nil || err2 != nil {
 				controller.InternalServerError(c, nil)
 				return
 			}
 
 			response := dto.SummaryResponse{
-				User:           userInfo,
-				AvailableDates: availableDates,
+				User:           userInfo.(dto.UserInfo),
+				AvailableDates: availableDates.([]string),
 			}
 
 			controller.Ok(c, response)

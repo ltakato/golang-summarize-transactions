@@ -11,6 +11,17 @@ import DatesCombobox from "@/components/dates-combobox/dates-combobox";
 import CategoriesPieChart from "@/components/categories-pie-chart/categories-pie-chart";
 import CategoryTransactions from "@/components/category-transactions/category-transactions";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { Bell, BellDot } from "lucide-react";
+
+import React from "react";
+import NotificationBell from "@/components/notification-bell/notification-bell";
 
 export default function UserPage() {
   const { setCurrentDate, currentCategory } = useStore();
@@ -28,9 +39,22 @@ export default function UserPage() {
 
   return (
     <div>
-      <div className="flex justify-between h-16 items-center p-4 border-b">
+      <div className="flex justify-between items-center h-16 p-4 border-b">
         <h2 className="text-2xl font-bold tracking-tight">Expenses Summary</h2>
-        <p>{summary.userInfo?.email}</p>
+        <div className="flex items-center space-x-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <NotificationBell count={10} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Billing</DropdownMenuItem>
+              <DropdownMenuItem>Team</DropdownMenuItem>
+              <DropdownMenuItem>Subscription</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <p>{summary.userInfo?.email}</p>
+        </div>
       </div>
       <div className="flex flex-col space-y-8 p-4">
         <DatesCombobox summary={summary} onChange={setCurrentDate} />

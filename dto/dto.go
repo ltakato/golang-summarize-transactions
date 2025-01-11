@@ -46,3 +46,10 @@ type CategoryTransactionResponse struct {
 	Date   string        `json:"date"`
 	Amount core.Currency `json:"amount"`
 }
+
+type NotificationResponse struct {
+	Id        string `json:"id"`
+	Text      string `json:"text"`
+	CreatedAt string `json:"createdAt"`
+	Read      bool   `json:"read"`
+}

@@ -41,6 +41,7 @@ func initializeApi() {
 
 	transactionsRepository := repositories.NewTransactionsRepository(db)
 	userRepository := repositories.NewUserRepository(db)
+	notificationRepository := repositories.NewNotificationRepository(db)
 
 	router := gin.Default()
 
@@ -64,10 +65,12 @@ func initializeApi() {
 
 	categoriesController := controllers.NewCategoriesController(transactionsRepository)
 	summaryController := controllers.NewSummaryController(userRepository, transactionsRepository)
+	notificationsController := controllers.NewNotificationsController(notificationRepository)
 
 	apiRouter := router.Group("/api")
 	{
 		apiRouter.GET("/summary", summaryController.GetSummary())
+		apiRouter.GET("/notifications", notificationsController.GetNotifications())
 		categoryRouter := apiRouter.Group("/categories")
 		categoryRouter.Use(CategoryQueryMiddleware())
 		{

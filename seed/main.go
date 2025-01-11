@@ -19,22 +19,34 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	dummyUsers := insertUsers(db)
+	//dummyUsers := insertUsers(db)
+	dummyUsers := findUsers(db)
 
-	dummyCategories := generateDummyCategories()
-	result := db.Create(&dummyCategories)
+	//dummyCategories := generateDummyCategories()
+	//result := db.Create(&dummyCategories)
 
-	if result.Error != nil {
-		log.Fatalf("failed to insert categories: %v", err)
-	}
+	//if result.Error != nil {
+	//	log.Fatalf("failed to insert categories: %v", err)
+	//}
 
 	//insertCategoryTerms(db, dummyCategory1, dummyCategory2)
 
-	insertTransactions(db, dummyCategories, dummyUsers)
+	//insertTransactions(db, dummyCategories, dummyUsers)
 
 	insertDummyNotifications(db, dummyUsers)
 
 	fmt.Println("Dummy data loaded successfully!")
+}
+
+func findUsers(db *gorm.DB) []models.User {
+	var users []models.User
+	res := db.Find(&users)
+
+	if res.Error != nil {
+		log.Fatalf("failed to find users: %v", res.Error)
+	}
+
+	return users
 }
 
 func insertUsers(db *gorm.DB) []models.User {

@@ -18,6 +18,10 @@ import (
 	"time"
 )
 
+const (
+	XUserId = "x-user-id"
+)
+
 func main() {
 	initializeApi()
 	//initializeEmailEngine()
@@ -49,7 +53,7 @@ func initializeApi() {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.ExposeHeaders = []string{controllers.XUnreadCount}
-	config.AddAllowHeaders("x-user-id")
+	config.AddAllowHeaders(XUserId)
 	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
@@ -90,7 +94,7 @@ func initializeApi() {
 
 func UserIdMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userId := c.GetHeader("x-user-id")
+		userId := c.GetHeader(XUserId)
 
 		if userId == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "x-user-id header is required"})

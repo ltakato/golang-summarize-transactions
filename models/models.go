@@ -36,3 +36,12 @@ type CategoryTerms struct {
 	CategoryID string `gorm:"not null"`
 	Category   Category
 }
+
+type Notification struct {
+	gorm.Model
+	Id     string `gorm:"type:uuid;default:gen_random_uuid()"`
+	Text   string `gorm:"not null"`
+	Read   bool   `gorm:"bool"`
+	User   User
+	UserID string `gorm:"not null"`
+}

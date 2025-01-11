@@ -32,6 +32,8 @@ func main() {
 
 	insertTransactions(db, dummyCategories, dummyUsers)
 
+	insertDummyNotifications(db, dummyUsers)
+
 	fmt.Println("Dummy data loaded successfully!")
 }
 
@@ -136,5 +138,19 @@ func insertTransactions(db *gorm.DB, dummyCategories []*models.Category, dummyUs
 
 	if result.Error != nil {
 		log.Printf("failed to insert transactions: %v", result.Error)
+	}
+}
+
+func insertDummyNotifications(db *gorm.DB, dummyUsers []models.User) {
+	notification := models.Notification{
+		Text: "Notification Test",
+		User: dummyUsers[0],
+		Read: false,
+	}
+
+	result := db.Create(&notification)
+
+	if result.Error != nil {
+		log.Printf("failed to insert notification: %v", result.Error)
 	}
 }

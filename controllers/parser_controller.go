@@ -115,6 +115,7 @@ func cleanCurrency(value string) string {
 func parseCsv(csvText string) (interface{}, CSVType, error) {
 	csvContent := strings.ReplaceAll(csvText, ";", ",")
 	csvContent = strings.ReplaceAll(csvContent, "\ufeff", "")
+	csvContent = strings.ReplaceAll(csvContent, "\r", "")
 	csvContent = cleanCurrency(csvContent)
 	reader := csv.NewReader(strings.NewReader(csvContent))
 	rows, err := reader.ReadAll()

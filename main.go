@@ -72,9 +72,11 @@ func initializeApi() {
 	categoriesController := controllers.NewCategoriesController(transactionsRepository)
 	summaryController := controllers.NewSummaryController(userRepository, transactionsRepository)
 	notificationsController := controllers.NewNotificationsController(notificationRepository)
+	parserController := controllers.NewParserController()
 
 	apiRouter := router.Group("/api")
 	{
+		apiRouter.POST("/parse-csv", parserController.ParseCsv())
 		apiRouter.GET("/summary", summaryController.GetSummary())
 		apiRouter.GET("/notifications", notificationsController.GetNotifications())
 		categoryRouter := apiRouter.Group("/categories").Use(CategoryQueryMiddleware())

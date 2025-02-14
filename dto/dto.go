@@ -11,6 +11,10 @@ type UserInfo struct {
 	Email string `json:"email"`
 }
 
+type ParseCsvRequest struct {
+	CsvUrl string `json:"csvUrl"`
+}
+
 type SummaryResponse struct {
 	User           UserInfo `json:"userInfo"`
 	AvailableDates []string `json:"availableDates"`

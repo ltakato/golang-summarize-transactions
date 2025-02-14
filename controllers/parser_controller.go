@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/csv"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"io"
 	"log"
 	"net/http"
 	"regexp"
@@ -63,7 +63,14 @@ func (controller *ParserController) ParseCsv() gin.HandlerFunc {
 				return
 			}
 
-			parsedData, csvType, err := parseCsv(payload.CsvUrl)
+			decodedBytes, err := base64.StdEncoding.DecodeString(payload.CsvText)
+			if err != nil {
+				fmt.Println("Error decoding:", err)
+				return
+			}
+
+			decodedStr := string(decodedBytes)
+			parsedData, csvType, err := parseCsv(decodedStr)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
@@ -105,23 +112,8 @@ func cleanCurrency(value string) string {
 	})
 }
 
-func parseCsv(url string) (interface{}, CSVType, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, Unknown, fmt.Errorf("failed to download CSV: %v", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, Unknown, fmt.Errorf("failed to fetch CSV, status code: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, Unknown, fmt.Errorf("failed to read response body: %v", err)
-	}
-
-	csvContent := strings.ReplaceAll(string(body), ";", ",")
+func parseCsv(csvText string) (interface{}, CSVType, error) {
+	csvContent := strings.ReplaceAll(csvText, ";", ",")
 	csvContent = strings.ReplaceAll(csvContent, "\ufeff", "")
 	csvContent = cleanCurrency(csvContent)
 	reader := csv.NewReader(strings.NewReader(csvContent))
@@ -134,8 +126,7 @@ func parseCsv(url string) (interface{}, CSVType, error) {
 		return nil, Unknown, fmt.Errorf("CSV must have at least a header row and one data row")
 	}
 
-	//headers := rows[0]
-	headers := []string{"Data", "Estabelecimento", "Portador", "Valor", "Parcela"}
+	headers := rows[0]
 
 	csvType := detectCSVType(headers)
 
@@ -145,11 +136,11 @@ func parseCsv(url string) (interface{}, CSVType, error) {
 	case Nubank:
 		var data []NubankCsv
 		for _, row := range rows[1:] {
-			amount, _ := strconv.ParseFloat(row[0], 64)
+			amount, _ := strconv.ParseFloat(row[2], 64)
 			data = append(data, NubankCsv{
-				Amount: amount,
+				Date:   row[0],
 				Title:  row[1],
-				Date:   row[2],
+				Amount: amount,
 			})
 		}
 		jsonData = data

@@ -12,7 +12,7 @@ type UserInfo struct {
 }
 
 type ParseCsvRequest struct {
-	CsvUrl string `json:"csvUrl"`
+	CsvText string `json:"csvText"`
 }
 
 type SummaryResponse struct {
